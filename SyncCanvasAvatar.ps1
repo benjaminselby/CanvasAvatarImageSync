@@ -360,21 +360,15 @@ $uploadUri = $fileUploadNotify.upload_url
 Write-Output "Uploading file data."
 
 try {
-    # Construct a hashmap which includes the file to be uploaded, along with the file parameters
-    # specified in the RESPONSE object above. The Invoke-RestMethod command sends the file as 
-    # part of a FORM submission.
-    # Note: In my experience, the hashmap arguments MUST be presented in the following order or else the 
-    # content-type of the file will not be recognised properly as an image.
-    $form = @{
-        filename = $imageFileName 
-        file = Get-Item -Path $imageFilePath
-        content_type = $imageFileContentType} 
+    # I originally programmed this to upload image file data using Powershell's Invoke-RestMethod, but I have found this to be unreliable. 
+    # It sometimes results in the MIME type of images being not recognised correctly by Canvas, which means that 
+    # the uploaded image is not available to assign as a user avatar.
+    # I can't figure out why this happens (it may have something to do with the way that Invoke-RestMethod combines 
+    # FORM elements into an HTTP request payload). 
+    # I am using CURL for the time being instead because it seems more reliable.
 
-    $fileUploadResponse = Invoke-RestMethod `
-        -URI $uploadUri `
-        -Method POST `
-        -Form $form `
-        -FollowRelLink
+    $curlResponse = curl -X POST "$uploadUri" -F "file=@$imageFilePath"
+    $fileUploadResponse = $curlResponse | Convertfrom-Json
 
 } catch [System.Management.Automation.ItemNotFoundException] {
     Write-Output "ERROR: File [$imageFilePath] not found. Upload aborted.`nMESSAGE: $($_.ErrorDetails.Message)"
