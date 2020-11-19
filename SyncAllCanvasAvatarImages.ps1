@@ -1,9 +1,9 @@
 
 
 Param (
-    [string] $rootFolder        = (Split-Path $MyInvocation.MyCommand.path),
-    [string] $logFilePath       = "$rootFolder\Logs\PhotoSync_$(get-date -format 'yyyy.MM.dd_hh.mm').log",
-    [string] $token = '<YOUR_TOKEN>'
+    [string] $rootFolder    = (Split-Path $MyInvocation.MyCommand.path),
+    [string] $logFilePath   = "$rootFolder\Logs\PhotoSync_$(get-date -format 'yyyy.MM.dd_hh.mm').log",
+    [string] $token         = '<YOUR_TOKEN>'
 )
 
 
